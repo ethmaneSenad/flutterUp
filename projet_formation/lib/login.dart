@@ -1,10 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:projet_formation/accueil.dart';
-// import 'package:projet_formation/app_constant.dart';
 import 'package:projet_formation/configration.dart';
 import 'package:projet_formation/input_screen.dart';
 import 'package:projet_formation/my_button.dart';
+import 'package:projet_formation/upload_file.dart';
 
 class login extends StatelessWidget {
   TextEditingController email= TextEditingController();
@@ -16,7 +15,7 @@ class login extends StatelessWidget {
       if (credential.user != null) {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const HomeScreen()),
+          MaterialPageRoute(builder: (context) => const UploadImage()),
         );
       }
     } on FirebaseAuthException catch (e) {  
@@ -31,19 +30,18 @@ class login extends StatelessWidget {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body:Container(
-        margin: EdgeInsets.all(5),
-        color: Color.fromARGB(209, 221, 218, 218),
+        margin: const EdgeInsets.all(5),
+        color: const Color.fromARGB(209, 221, 218, 218),
         child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20.0,vertical: 10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             SizedBox(height: AppBar().preferredSize.height * 2),
-            Align(
+            const Align(
               alignment: AlignmentDirectional.center,
               child: Icon(
                 Icons.lock,size: 100,color: Colors.blue,
-                 
               ),
             ),
             SizedBox(height: fullHeight(context) * 0.06),
@@ -53,20 +51,13 @@ class login extends StatelessWidget {
             SizedBox(height: fullHeight(context) * 0.02),
             MyTextFiled(hint: 'Password',   textEditingController:password,),
             SizedBox(height: fullHeight(context) * 0.01),
-            Align(
-                alignment: AlignmentDirectional.topEnd,
-                 
-                     ),
+            const Align( alignment: AlignmentDirectional.topEnd ),
             SizedBox(height: fullHeight(context) * 0.04),
-             MyBoutton(onPressed: () {
-              print("******************");
-            
+             MyBoutton(onPressed: () {            
               signIn(email.text,password.text,context);
 
             }, title: 'Se connecter'),
             SizedBox(height: fullHeight(context) * 0.09),
-            Center(
-     ),
           ],
         ),
       ),

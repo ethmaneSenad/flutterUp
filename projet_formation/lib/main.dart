@@ -1,9 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:projet_formation/accueil.dart';
 import 'package:projet_formation/firebase_options.dart';
 import 'package:projet_formation/login.dart';
-import 'package:projet_formation/upload_file.dart';
 
  void main()async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,7 +18,7 @@ import 'package:projet_formation/upload_file.dart';
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: HomeScreen(),
+      home: login(),
     );
   }
 }

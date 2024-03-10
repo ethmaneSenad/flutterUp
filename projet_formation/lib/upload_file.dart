@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:projet_formation/page.dart';
 
 class UploadImage extends StatefulWidget {
   const UploadImage({super.key});
@@ -52,8 +53,9 @@ class _UploadImageState extends State<UploadImage> {
             height: 10,),
           Center(child: IconButton(onPressed: () async{
               //add the package image_picker
-             final   file = await  ImagePicker().pickImage(source:ImageSource.gallery);
+             final file = await  ImagePicker().pickImage(source:ImageSource.gallery);
              if (file==null)return;
+             
              String fileName = 
              DateTime.now().microsecondsSinceEpoch.toString();
              // Get the reference to Storage root
@@ -71,6 +73,8 @@ class _UploadImageState extends State<UploadImage> {
                 .putFile(File(file.path));
                 //make this upload image link in firebase database
                 imageUrl = await referenceImageaToUpload.getDownloadURL();
+                
+
               }catch(error){
                 // some error
               }
@@ -80,10 +84,10 @@ class _UploadImageState extends State<UploadImage> {
           Center(
             child: ElevatedButton(
               onPressed:() async {
-                if(imageUrl.isEmpty){
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: const Text("please select and upload image")));
-                  return;
-                }
+                // if(imageUrl.isEmpty){
+                //   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: const Text("please select and upload image")));
+                //   return;
+                // }
                 final String Titre = titre.text;
                 final String Auteur= auteur.text;
                 if (Auteur!= null){
@@ -96,7 +100,7 @@ class _UploadImageState extends State<UploadImage> {
                   auteur.text = '';
                   Navigator.of(context).pop();
                 }
-              }, child:const Text('Create')))
+              }, child:const Text('Ajouter un livre')))
         
         ], 
       ),
@@ -115,40 +119,75 @@ class _UploadImageState extends State<UploadImage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar:AppBar(
-        title:const Text("List de mes livre"),
+        title:const Text("Liste de mes livres",style: TextStyle(fontWeight: FontWeight.bold),),
+        backgroundColor: Colors.green,
         ) ,
-        body: StreamBuilder<QuerySnapshot>(
-          stream: _stream,
-          builder: (BuildContext context, AsyncSnapshot snapshot){
-            if(snapshot.hasError){
-              return Center(child: Text("Some error occured ${snapshot.error}"),);
-            }
-            // Now ,cheik if detea arried?
-            if(snapshot.hasData){
-              QuerySnapshot querySnapshot =snapshot.data;
-              List<QueryDocumentSnapshot>document = querySnapshot.docs;
-
-              // we need to convert your documents to Maps to disply
-              List<Map> table =document.map((e)=>e.data()as Map).toList();
-
-              //At last, Display the list of table
-              return ListView.builder(
-                itemCount: table.length,
-                itemBuilder: (BuildContext context, int idex){
-                Map thisTable = table[idex];
-                return ListTile(
-                  title: Text("${thisTable['Titre']}"),
-                );
-              });
-            }
-            return const Center(child: CircularProgressIndicator(),);
-
-        },),
+        body: Container(
+          margin: const EdgeInsets.all(10),
+        color:const Color.fromARGB(218, 221, 220, 218),
+        padding: const EdgeInsets.all(10),
+          child: StreamBuilder<QuerySnapshot>(
+            stream: _stream,
+            builder: (BuildContext context, AsyncSnapshot snapshot){
+              if(snapshot.hasError){
+                return Center(child: Text("Some error occured ${snapshot.error}"),);
+              }
+              // Now ,cheik if detea arried?
+              if(snapshot.hasData){
+                QuerySnapshot querySnapshot =snapshot.data;
+                List<QueryDocumentSnapshot>document = querySnapshot.docs;
+          
+                // we need to convert your documents to Maps to disply
+                List<Map> table =document.map((e)=>e.data()as Map).toList();
+          
+                //At last, Display the list of table
+                return ListView.builder(
+                  itemCount: table.length,
+                  itemBuilder: (BuildContext context, int idex){
+                  Map thisTable = table[idex];
+                  return ListTile(
+                    // title: Text("${thisTable['Titre']}"),
+                    title : Card(
+            color: Colors.white,
+            margin: const EdgeInsets.all(5),
+            child: ListTile(
+              onTap: (){
+                Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const MaPage()),
+              );
+                print(imageUrl);
+              },
+          
+              
+                leading: const Icon(Icons.photo_rounded , size: 50,),
+                // leading: Image.asset("assets/images/chaise.png"),
+                
+                // Image.asset("assets/images/chaise.png")
+          
+          
+                title:  Text("${thisTable['Titre']}",
+                style: const TextStyle(fontSize: 20,color: Colors.black,fontWeight: FontWeight.w600)),
+                subtitle: Text ("${thisTable['Auteur']}",
+                style: const TextStyle(  
+                            fontSize: 15,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.grey),
+                ),
+                      )
+          ),
+                  );
+                });
+              }
+              return const Center(child: CircularProgressIndicator(),);
+          
+          },),
+        ),
       floatingActionButton: FloatingActionButton(
         onPressed: (){
           _create();
         },
-      child:const Icon(Icons.add) ,),
+      child:const Icon(Icons.add , color: Colors.white,),backgroundColor: Colors.blueAccent,),
     );
   }
 }
